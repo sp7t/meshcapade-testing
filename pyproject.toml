@@ -1,0 +1,18 @@
+[project]
+name = "meshcapade"
+version = "0.1.0"
+description = "Meshcapade Avatar Upload Script"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "python-dotenv>=1.1.1",
+    "requests>=2.32.3",
+]
+
+[dependency-groups]
+dev = [
+    "numpy>=2.3.1",
+    "opencv-python>=4.11.0.86",
+    "pillow>=11.2.1",
+    "scipy>=1.16.0",
+]
