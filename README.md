@@ -7,7 +7,6 @@ A Python tool for uploading avatar images to Meshcapade API and downloading body
 - Python 3.13 or higher
 - [uv](https://docs.astral.sh/uv/) package manager (recommended) or pip
 - Meshcapade account with API credentials
-- Optional: Local segmentation API for background removal (see Background Removal section)
 
 ## Quick Start
 
@@ -37,7 +36,7 @@ pip install -e .
 Create a `.env` file in the project root:
 
 ```bash
-cp .env.example .env  # if example exists, or create manually
+cp .env.example .env
 ```
 
 Add your Meshcapade credentials to `.env`:
@@ -80,12 +79,12 @@ data/
 **Required fields:**
 
 - `gender`: "male", "female", or "neutral"
-- `height`: height in centimeters (required)
+- `height`: height in centimeters
 
 **Optional fields:**
 
-- `weight`: weight in kilograms (optional)
-- `upload_order`: array of image filenames in desired upload sequence (optional)
+- `weight`: weight in kilograms
+- `upload_order`: array of image filenames in desired upload sequence
 
 **Upload Order:**
 If `upload_order` is specified, images will be uploaded in that exact sequence. This is recommended for consistent 360° rotation views (front → right → back → left). If not specified, images will be uploaded in default file system order.
