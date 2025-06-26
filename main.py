@@ -329,8 +329,8 @@ def main():
         # Present options
         print("\nWhat would you like to do?")
         if has_avatar_id:
-            print("  1. Download measurements")
-            print("  2. Re-upload avatar")
+            print("  1. Re-upload avatar")
+            print("  2. Download measurements")
             print("  3. Export 3D model")
             valid_choices = [1, 2, 3]
         else:
@@ -356,6 +356,10 @@ def main():
 
         # Execute chosen action
         if has_avatar_id and action == 1:
+            # Re-upload avatar
+            upload_avatar(access_token, selected_subject, avatar_data, image_files)
+            print(f"\n🎉 Avatar '{selected_subject}' uploaded and processing started!")
+        elif has_avatar_id and action == 2:
             # Download measurements
             avatar_id = avatar_data["avatar_id"]
             success = download_measurements(access_token, avatar_id, selected_subject)
@@ -363,10 +367,6 @@ def main():
                 print(f"\n🎉 Measurements downloaded for '{selected_subject}'!")
             else:
                 print(f"\n❌ Could not download measurements for '{selected_subject}'")
-        elif has_avatar_id and action == 2:
-            # Upload avatar (either new upload or re-upload)
-            upload_avatar(access_token, selected_subject, avatar_data, image_files)
-            print(f"\n🎉 Avatar '{selected_subject}' uploaded and processing started!")
         elif has_avatar_id and action == 3:
             # Export 3D model
             success = export_3d_model(
@@ -376,6 +376,10 @@ def main():
                 print(f"\n🎉 3D model exported and saved for '{selected_subject}'!")
             else:
                 print(f"\n❌ Could not export 3D model for '{selected_subject}'")
+        else:
+            # New upload (no existing avatar_id)
+            upload_avatar(access_token, selected_subject, avatar_data, image_files)
+            print(f"\n🎉 Avatar '{selected_subject}' uploaded and processing started!")
 
     except Exception as e:
         print(f"❌ Error: {e}")
