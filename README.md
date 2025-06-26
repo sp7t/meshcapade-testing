@@ -62,18 +62,33 @@ data/
 │   └── image4.jpg
 ```
 
-**Required `avatar.json` format:**
+**Example `avatar.json` format:**
 
 ```json
 {
   "gender": "female",
-  "height": 170.5
+  "height": 170.5,
+  "upload_order": [
+    "subject-front.jpeg",
+    "subject-right-side.jpeg",
+    "subject-back.jpeg",
+    "subject-left-side.jpeg"
+  ]
 }
 ```
 
+**Required fields:**
+
 - `gender`: "male", "female", or "neutral"
 - `height`: height in centimeters (required)
+
+**Optional fields:**
+
 - `weight`: weight in kilograms (optional)
+- `upload_order`: array of image filenames in desired upload sequence (optional)
+
+**Upload Order:**
+If `upload_order` is specified, images will be uploaded in that exact sequence. This is recommended for consistent 360° rotation views (front → right → back → left). If not specified, images will be uploaded in default file system order.
 
 ### 5. Run the Tool
 

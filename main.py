@@ -77,10 +77,24 @@ def load_subject_data(subject_name: str) -> tuple:
         gender = "neutral"
     avatar_data["gender"] = gender
 
-    # Find image files
+    # Get image files in upload order if specified
+    upload_order = avatar_data.get("upload_order", [])
     image_files = []
-    for ext in ["*.jpg", "*.jpeg", "*.png"]:
-        image_files.extend(subject_dir.glob(ext))
+
+    if upload_order:
+        # Use specified upload order
+        print(f"Using upload order: {upload_order}")
+        for filename in upload_order:
+            file_path = subject_dir / filename
+            if file_path.exists():
+                image_files.append(file_path)
+            else:
+                print(f"Warning: File {filename} not found, skipping")
+    else:
+        # Fallback to any order if no upload_order specified
+        print("No upload order specified, using default file order")
+        for ext in ["*.jpg", "*.jpeg", "*.png"]:
+            image_files.extend(subject_dir.glob(ext))
 
     # Limit to 4 images
     image_files = image_files[:4]
@@ -100,11 +114,11 @@ def create_avatar(access_token: str) -> str:
 
 
 def upload_images(access_token: str, avatar_id: str, image_files: List[Path]):
-    """Upload all images for the avatar."""
+    """Upload all images for the avatar in the specified order."""
     headers = get_auth_headers(access_token)
 
-    for image_file in image_files:
-        print(f"  Uploading {image_file.name}...")
+    for i, image_file in enumerate(image_files, 1):
+        print(f"  Uploading image {i}/{len(image_files)}: {image_file.name}...")
 
         # Generate presigned URL
         url = f"{API_URL}/avatars/{avatar_id}/images"
