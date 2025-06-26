@@ -128,9 +128,10 @@ The tool will:
 
 **"Avatar not ready yet"**
 
-- Avatar processing takes time on Meshcapade servers
+- Avatar processing takes 30-60 minutes on average on Meshcapade servers
 - Re-run the tool and select "Download measurements" to check status
 - Processing state will show current status
+- If avatar is not ready after 1+ hours, re-upload and try again
 
 **Image upload fails**
 
