@@ -150,6 +150,52 @@ def start_fitting(
     response.raise_for_status()
 
 
+def export_3d_model(access_token: str, avatar_id: str, subject_name: str) -> bool:
+    """Export and download 3D model as OBJ file."""
+    url = f"{API_URL}/avatars/{avatar_id}/export"
+    headers = get_auth_headers(access_token)
+
+    payload = {"format": "obj", "pose": "a"}
+
+    print("Requesting 3D model export...")
+    response = requests.post(url, headers=headers, json=payload)
+    response.raise_for_status()
+
+    export_data = response.json()
+
+    # Check if export is ready
+    if export_data.get("data", {}).get("attributes", {}).get("state") == "READY":
+        print("✓ Export is ready! Downloading 3D model...")
+
+        # Get download URL
+        download_url = (
+            export_data.get("data", {}).get("attributes", {}).get("url", {}).get("path")
+        )
+
+        if download_url:
+            # Download the OBJ file
+            print(f"Downloading from: {download_url}")
+            obj_response = requests.get(download_url)
+            obj_response.raise_for_status()
+
+            # Save OBJ file
+            subject_dir = Path("data") / subject_name
+            obj_file = subject_dir / f"{subject_name}.obj"
+            with open(obj_file, "wb") as f:
+                f.write(obj_response.content)
+            print(f"✓ 3D model saved to {obj_file}")
+            return True
+        else:
+            print("❌ No download URL found in response")
+            return False
+    else:
+        current_state = (
+            export_data.get("data", {}).get("attributes", {}).get("state", "UNKNOWN")
+        )
+        print(f"❌ Export not ready yet. Current state: {current_state}")
+        return False
+
+
 def download_measurements(access_token: str, avatar_id: str, subject_name: str) -> bool:
     """Download measurements if avatar is ready."""
     url = f"{API_URL}/avatars/{avatar_id}"
@@ -285,7 +331,8 @@ def main():
         if has_avatar_id:
             print("  1. Download measurements")
             print("  2. Re-upload avatar")
-            valid_choices = [1, 2]
+            print("  3. Export 3D model")
+            valid_choices = [1, 2, 3]
         else:
             print("  1. Upload avatar (no existing avatar found)")
             valid_choices = [1]
@@ -316,10 +363,19 @@ def main():
                 print(f"\n🎉 Measurements downloaded for '{selected_subject}'!")
             else:
                 print(f"\n❌ Could not download measurements for '{selected_subject}'")
-        else:
+        elif has_avatar_id and action == 2:
             # Upload avatar (either new upload or re-upload)
             upload_avatar(access_token, selected_subject, avatar_data, image_files)
             print(f"\n🎉 Avatar '{selected_subject}' uploaded and processing started!")
+        elif has_avatar_id and action == 3:
+            # Export 3D model
+            success = export_3d_model(
+                access_token, avatar_data["avatar_id"], selected_subject
+            )
+            if success:
+                print(f"\n🎉 3D model exported and saved for '{selected_subject}'!")
+            else:
+                print(f"\n❌ Could not export 3D model for '{selected_subject}'")
 
     except Exception as e:
         print(f"❌ Error: {e}")
